@@ -1,3 +1,6 @@
+# Controllers are effectively callbacks that run for a particular URL, and they tend to be where a lot of the logic is. 
+# Separating the functions into its own class isn't necessary, but a way to better organize our code and make it more readable
+
 from flask import request
 from flask_restful import Resource
 
