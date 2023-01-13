@@ -7,7 +7,7 @@ from flask_restful import Resource
 from .data import activities
 
 class ActivityList(Resource):
-	# GET /activities => returns our list of dictionaries from models.py file
+	# GET /activities => returns our list of dictionaries from data.py file
     def get(self):
         return {'results': activities}, 200
 
