@@ -4,7 +4,7 @@
 from flask import request
 from flask_restful import Resource
 
-from .models import activities
+from .data import activities
 
 class ActivityList(Resource):
 	# GET /activities => returns our list of dictionaries from models.py file
