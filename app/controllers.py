@@ -13,7 +13,6 @@ class ActivityList(Resource):
         try :
             activities = Activity.query.all()
             return activities_schema.dump(activities), 200
-            return {'results': activities}, 200
         except Exception as e:
             return {'message': str(e)}, 418
 
@@ -25,11 +24,8 @@ class ActivityCreate(Resource):
         try:
             new_item = request.json
             new_activity = Activity(**new_item)
-            print(new_activity)
             db.session.add(new_activity)
             db.session.commit()
-            # activities.append(new_item)
-
             return activity_schema.dump(new_activity), 201
 
         except Exception as e:
@@ -54,19 +50,27 @@ class ActivityDetail(Resource):
 
 class ActivityUpdate(Resource):
     # PUT /activity => Updates the item and returns the dictionary with the updated items set by the user
-    def put(self, key):
-        updated_item = request.json
-        for i, result in enumerate(activities):
-            if result['key'] == key:
-                updated_result = {**result, **updated_item}
-                activities[i] = updated_result
-        
-        return activities, 201
+    def put(self, id):
+        try:
+            item_data = request.json
+            Activity.query.filter_by(id=id).update(item_data)
+            updated_activity = Activity.query.get_or_404(id)
+            db.session.commit()
+            return activity_schema.dump(updated_activity), 201
+        except Exception as e:
+            return {'message': str(e)}, 418
 
 class ActivityDelete(Resource):
     # DELETE /activity => Deletes an item by key
-    def delete(self, key):
-        for i, result in enumerate(activities):
-            if result['key'] == key:
-                deleted_activity = activities.pop(i)
-                return deleted_activity, 200
+     def delete(self, id):
+
+        try:
+            activity = Activity.query.get_or_404(id)
+            deleted_activity = {**activity_schema.dump(activity)}
+            db.session.delete(activity)
+            db.session.commit()
+            deleted_activity['deleted'] = True
+            return deleted_activity, 200
+
+        except Exception as e:
+            return {'message': str(e)}, 418
